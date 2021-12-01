@@ -11,16 +11,6 @@ var Puzzles = []puzzle.Puzzle{
 	Puzzle2{},
 }
 
-type Sonar interface {
-	Sweep() <-chan Measurement
-}
-
-type Measurement int
-
-const (
-	NoMeasurement Measurement = -1
-)
-
 type Puzzle1 struct{}
 
 func (Puzzle1) PrintQuestion() {
@@ -28,20 +18,17 @@ func (Puzzle1) PrintQuestion() {
 }
 
 func (Puzzle1) PrintAnswer() {
-	sonar := MockSonar{}
+	sonar := NewSonar()
 
 	var (
 		amountIncreasing = 0
-		lastSum          = NoMeasurement
-		window           = NewWindow(1)
+		last             = NoMeasurement
 	)
 	for measurement := range sonar.Sweep() {
-		window.Put(measurement)
-		newSum := window.Sum()
-		if lastSum != NoMeasurement && newSum > lastSum {
+		if last.IsValid() && measurement > last {
 			amountIncreasing += 1
 		}
-		lastSum = newSum
+		last = measurement
 	}
 	fmt.Println(amountIncreasing)
 }
@@ -54,7 +41,7 @@ func (Puzzle2) PrintQuestion() {
 }
 
 func (Puzzle2) PrintAnswer() {
-	sonar := MockSonar{}
+	sonar := NewSonar()
 
 	var (
 		amountIncreasing = 0
@@ -64,7 +51,7 @@ func (Puzzle2) PrintAnswer() {
 	for measurement := range sonar.Sweep() {
 		window.Put(measurement)
 		newSum := window.Sum()
-		if lastSum != NoMeasurement && newSum > lastSum {
+		if lastSum.IsValid() && newSum > lastSum {
 			amountIncreasing += 1
 		}
 		lastSum = newSum
