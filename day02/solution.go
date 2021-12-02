@@ -14,8 +14,8 @@ var Puzzles = []puzzle.Puzzle{
 type Puzzle1 struct{}
 
 func (Puzzle1) PrintQuestion() {
-	fmt.Println("Calculate the horizontal position and depth you would have after following the planned course.")
-	fmt.Println("What do you get if you multiply your final horizontal position by your final depth?")
+	fmt.Println("> Calculate the horizontal position and depth you would have after following the planned course.")
+	fmt.Println("> What do you get if you multiply your final horizontal position by your final depth?")
 }
 
 func (Puzzle1) PrintAnswer() {
@@ -34,8 +34,8 @@ func (Puzzle1) PrintAnswer() {
 type Puzzle2 struct{}
 
 func (Puzzle2) PrintQuestion() {
-	fmt.Println("Using this new interpretation of the commands, calculate the horizontal position and depth you would have after following the planned course.")
-	fmt.Println("What do you get if you multiply your final horizontal position by your final depth?")
+	fmt.Println("> Using this new interpretation of the commands, calculate the horizontal position and depth you would have after following the planned course.")
+	fmt.Println("> What do you get if you multiply your final horizontal position by your final depth?")
 }
 
 func (Puzzle2) PrintAnswer() {
