@@ -12,18 +12,36 @@ type parser struct {
 }
 
 const (
-	tokenNone    = ""
 	tokenForward = "forward"
 	tokenUp      = "up"
 	tokenDown    = "down"
 	tokenSpace   = " "
 )
 
-var commandTokens = []string{tokenForward, tokenUp, tokenDown}
-
 func ParseCommand(s string) Command {
 	p := &parser{input: s}
 	return p.parse()
+}
+
+func (p *parser) parse() Command {
+
+	switch {
+	case p.accept(tokenForward):
+		p.mustAccept(tokenSpace)
+		amount := p.mustParseInt(p.peek())
+		return CommandForward{Amount: amount}
+	case p.accept(tokenUp):
+		p.mustAccept(tokenSpace)
+		amount := p.mustParseInt(p.peek())
+		return CommandUp{Amount: amount}
+	case p.accept(tokenDown):
+		p.mustAccept(tokenSpace)
+		amount := p.mustParseInt(p.peek())
+		return CommandDown{Amount: amount}
+	default:
+		p.fail()
+	}
+	return nil
 }
 
 func (p *parser) advance(token string) {
@@ -42,47 +60,20 @@ func (p *parser) accept(token string) bool {
 	return false
 }
 
-func (p *parser) parse() Command {
-	invalidCommand := func() {
-		log.Fatalf("invalid command: %s", p.input)
-	}
+func (p *parser) fail() {
+	log.Fatalf("invalid command: %s", p.input)
+}
 
-	token := tokenNone
-	for _, t := range commandTokens {
-		ok := p.accept(t)
-		if ok {
-			token = t
-			continue
-		}
+func (p *parser) mustAccept(token string) {
+	ok := p.accept(token)
+	if !ok {
+		p.fail()
 	}
-	if token == tokenNone {
-		invalidCommand()
+}
+func (p *parser) mustParseInt(token string) int {
+	value, err := strconv.Atoi(p.peek())
+	if err != nil {
+		p.fail()
 	}
-	if !p.accept(tokenSpace) {
-		invalidCommand()
-	}
-
-	switch token {
-	case tokenForward:
-		amount, err := strconv.Atoi(p.peek())
-		if err != nil {
-			invalidCommand()
-		}
-		return CommandForward{Amount: amount}
-	case tokenUp:
-		amount, err := strconv.Atoi(p.peek())
-		if err != nil {
-			invalidCommand()
-		}
-		return CommandUp{Amount: amount}
-	case tokenDown:
-		amount, err := strconv.Atoi(p.peek())
-		if err != nil {
-			invalidCommand()
-		}
-		return CommandDown{Amount: amount}
-	default:
-		invalidCommand()
-		return nil
-	}
+	return value
 }
