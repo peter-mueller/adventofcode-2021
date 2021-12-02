@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/peter-mueller/adventofcode-2021/day01"
+	"github.com/peter-mueller/adventofcode-2021/day02"
 	"github.com/peter-mueller/adventofcode-2021/puzzle"
 )
 
@@ -11,6 +12,7 @@ type Day int
 
 var puzzlesPerDay = map[Day][]puzzle.Puzzle{
 	1: day01.Puzzles,
+	2: day02.Puzzles,
 }
 
 func main() {
@@ -20,7 +22,12 @@ func main() {
 	fmt.Println("==============")
 	fmt.Println()
 
-	for day, puzzles := range puzzlesPerDay {
+	for day := Day(1); int(day) <= 25; day++ {
+		puzzles, ok := puzzlesPerDay[day]
+		if !ok {
+			continue
+		}
+
 		fmt.Printf("# Day %02d, see %s\n", day, linkToDay(day))
 		fmt.Println()
 		for _, p := range puzzles {
