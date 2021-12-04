@@ -87,10 +87,3 @@ func count(input []DiagnosticNumber, pos int) (zeros, ones int) {
 	}
 	return zeros, ones
 }
-
-type BitCriteria int
-
-const (
-	OxygenGeneratorRating BitCriteria = iota
-	CO2ScrubberRating
-)
