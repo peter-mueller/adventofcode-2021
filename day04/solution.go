@@ -29,18 +29,17 @@ func (Puzzle1) PrintAnswer() {
 }
 
 func runGame(boards <-chan Board, input <-chan int) chan result {
-	inputsForPlayers := make([]chan int, 0)
-	results := make(chan result)
-	var wg sync.WaitGroup
+	var (
+		moderator = moderator{}
+		results   = make(chan result)
+	)
 
 	for board := range boards {
-		c := make(chan int)
-		inputsForPlayers = append(inputsForPlayers, c)
 		p := player{board: board}
+		c := moderator.subscribe()
 
-		wg.Add(1)
 		go func() {
-			defer wg.Done()
+			defer moderator.markDone()
 			res, ok := <-p.play(c)
 			if ok {
 				results <- res
@@ -48,22 +47,42 @@ func runGame(boards <-chan Board, input <-chan int) chan result {
 		}()
 	}
 
-	go announce(input, inputsForPlayers)
+	go moderator.announce(input)
 
 	go func() {
 		defer close(results)
-		wg.Wait()
+		moderator.waitAllDone()
 	}()
 	return results
 }
 
-func announce(numbers <-chan int, to []chan int) {
+type moderator struct {
+	chanToPlayers []chan int
+	wg            sync.WaitGroup
+}
+
+func (m *moderator) subscribe() <-chan int {
+	c := make(chan int)
+	m.chanToPlayers = append(m.chanToPlayers, c)
+	m.wg.Add(1)
+	return c
+}
+
+func (m *moderator) markDone() {
+	m.wg.Done()
+}
+
+func (m *moderator) waitAllDone() {
+	m.wg.Wait()
+}
+
+func (m *moderator) announce(numbers <-chan int) {
 	for n := range numbers {
-		for _, c := range to {
+		for _, c := range m.chanToPlayers {
 			c <- n
 		}
 	}
-	for _, c := range to {
+	for _, c := range m.chanToPlayers {
 		close(c)
 	}
 }
