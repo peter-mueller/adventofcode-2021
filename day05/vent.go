@@ -1,6 +1,7 @@
 package day05
 
 import (
+	"fmt"
 	"log"
 	"strconv"
 	"strings"
@@ -35,6 +36,11 @@ func (p Point) Add(o Point) (r Point) {
 }
 
 func (v Vent) Points() (points []Point) {
+	err := v.Validate()
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	p1, p2 := v.P1, v.P2
 	delta := p2.Subtract(p1)
 	delta.X = normalize(delta.X)
@@ -49,6 +55,17 @@ func (v Vent) Points() (points []Point) {
 	}
 }
 
+func (v Vent) Validate() error {
+	if v.IsHorizontal() || v.IsVertical() {
+		return nil
+	}
+	delta := v.P1.Subtract(v.P2)
+	if abs(delta.X) != abs(delta.Y) {
+		return fmt.Errorf("Vent is not perfectly 45° diagonal: %+v %+v", v.P1, v.P2)
+	}
+	return nil
+}
+
 func normalize(value int) int {
 	switch {
 	case value < 0:
@@ -57,6 +74,13 @@ func normalize(value int) int {
 		return 1
 	}
 	return 0
+}
+
+func abs(value int) int {
+	if value < 0 {
+		return -1 * value
+	}
+	return value
 }
 
 func ParseVent(s string) (v Vent) {
