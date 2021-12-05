@@ -6,6 +6,11 @@ import (
 	"strings"
 )
 
+func ParseCommand(s string) Command {
+	p := &parser{input: s}
+	return p.parse()
+}
+
 type parser struct {
 	input string
 	pos   int
@@ -17,11 +22,6 @@ const (
 	tokenDown    = "down"
 	tokenSpace   = " "
 )
-
-func ParseCommand(s string) Command {
-	p := &parser{input: s}
-	return p.parse()
-}
 
 func (p *parser) parse() Command {
 
