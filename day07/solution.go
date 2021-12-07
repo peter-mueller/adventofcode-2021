@@ -26,8 +26,7 @@ func (Puzzle1) PrintAnswer() {
 
 	totalfuel := 0
 	for _, crab := range list {
-		fuel := abs(crab.HorizontalPosition - medianPos)
-		totalfuel += fuel
+		totalfuel += crab.FuelTo(medianPos)
 	}
 	fmt.Println(totalfuel)
 }
@@ -52,24 +51,12 @@ func (Puzzle2) PrintAnswer() {
 		totalFuelToLeft  = 0
 	)
 	for _, crab := range list {
-		dToRight := abs(meanPosRight - crab.HorizontalPosition)
-		dToLeft := abs(meanPosLeft - crab.HorizontalPosition)
-		totalFuelToRight += triangularNumber(dToRight)
-		totalFuelToLeft += triangularNumber(dToLeft)
+		totalFuelToRight += crab.FuelVariantTo(meanPosLeft)
+		totalFuelToLeft += crab.FuelVariantTo(meanPosRight)
 	}
 
 	bestTotalFuel := min(totalFuelToLeft, totalFuelToRight)
 	fmt.Println(bestTotalFuel)
-}
-
-// ex.:
-// .____ 1
-// ..___ 3
-// ...__ 6
-// ...._ 10
-// (half 4 * 5 Rectangle)
-func triangularNumber(n int) int {
-	return (n * (n + 1)) / 2
 }
 
 func min(n1, n2 int) int {
@@ -77,13 +64,6 @@ func min(n1, n2 int) int {
 		return n2
 	}
 	return n1
-}
-
-func abs(n int) int {
-	if n < 0 {
-		return -n
-	}
-	return n
 }
 
 func meanPosition(list []CrabSubmarine) float64 {
