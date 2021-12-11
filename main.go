@@ -10,6 +10,8 @@ import (
 	"github.com/peter-mueller/adventofcode-2021/day05"
 	"github.com/peter-mueller/adventofcode-2021/day06"
 	"github.com/peter-mueller/adventofcode-2021/day07"
+	"github.com/peter-mueller/adventofcode-2021/day08"
+	"github.com/peter-mueller/adventofcode-2021/day09"
 	"github.com/peter-mueller/adventofcode-2021/puzzle"
 )
 
@@ -23,6 +25,8 @@ var puzzlesPerDay = map[Day][]puzzle.Puzzle{
 	5: day05.Puzzles,
 	6: day06.Puzzles,
 	7: day07.Puzzles,
+	8: day08.Puzzles,
+	9: day09.Puzzles,
 }
 
 func main() {
